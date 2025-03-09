@@ -2,7 +2,7 @@ name: PolarAlerts
 version: 1.0
 main: dev.briiqn.polaralerts.PolarAlerts
 api-version: 1.13
-softdepend: [PolarLoader]  # Changed from 'depend' to 'softdepend'
+softdepend: [PolarLoader]
 authors: [briiqn]
 description: Helper plugin that forwards Polar alerts to BungeeCord
 
