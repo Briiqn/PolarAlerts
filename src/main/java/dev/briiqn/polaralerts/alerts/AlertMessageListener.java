@@ -27,7 +27,7 @@ public class AlertMessageListener implements PluginMessageListener {
         if (!channel.equals("BungeeCord")) {
             return;
         }
-
+        if(player!=null) return;
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subchannel = in.readUTF();
 

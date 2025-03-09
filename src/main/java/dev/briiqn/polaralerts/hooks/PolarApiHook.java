@@ -58,18 +58,14 @@ public class PolarApiHook implements Runnable {
         }
 
         try {
-            // Try to get the Polar API
             polarApi = PolarApiAccessor.access().get();
 
             if (polarApi != null) {
                 plugin.getLogger().info("Successfully connected to Polar API");
-
-                // Register with Polar's loader system to complete initialization
                 top.polar.api.loader.LoaderApi.registerEnableCallback(this);
                 return true;
             }
         } catch (PolarNotLoadedException e) {
-            // Not loaded yet, will retry
             if (plugin.getConfig().getBoolean("debug", false)) {
                 plugin.getLogger().info("Polar API not loaded yet, will retry...");
             }
@@ -86,12 +82,7 @@ public class PolarApiHook implements Runnable {
     @Override
     public void run() {
         try {
-            // This will be called by Polar's loader after Polar is fully loaded
-
-            // Load configuration
             loadConfig();
-
-            // Register plugin messaging channels
             if (useBungeeForward) {
                 plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, BUNGEE_CHANNEL);
                 registeredChannels.add(BUNGEE_CHANNEL);
@@ -101,8 +92,6 @@ public class PolarApiHook implements Runnable {
                 plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, ALERTS_CHANNEL);
                 registeredChannels.add(ALERTS_CHANNEL);
             }
-
-            // Register listeners for Polar events
             registerEventListeners();
 
             connected = true;
@@ -120,10 +109,7 @@ public class PolarApiHook implements Runnable {
      * Loads configuration for this hook
      */
     private void loadConfig() {
-        // Load server name
         serverName = plugin.getConfig().getString("server-name", "unknown");
-
-        // Try to get from Bukkit if not set
         if (serverName.equals("unknown")) {
             String bukkitName = Bukkit.getServerId();
             if (bukkitName != null && !bukkitName.isEmpty()) {
@@ -151,22 +137,15 @@ public class PolarApiHook implements Runnable {
      * Registers event listeners with the Polar API
      */
     private void registerEventListeners() {
-        // Detection events
         if (plugin.getConfig().getBoolean("alerts.detection", true)) {
             polarApi.events().repository().registerListener(DetectionAlertEvent.class, this::handleDetectionEvent);
         }
-
-        // Cloud detection events
         if (plugin.getConfig().getBoolean("alerts.cloud", true)) {
             polarApi.events().repository().registerListener(CloudDetectionEvent.class, this::handleCloudDetectionEvent);
         }
-
-        // Mitigation events
         if (plugin.getConfig().getBoolean("alerts.mitigation", true)) {
             polarApi.events().repository().registerListener(MitigationEvent.class, this::handleMitigationEvent);
         }
-
-        // Punishment events
         if (plugin.getConfig().getBoolean("alerts.punishment", true)) {
             polarApi.events().repository().registerListener(PunishmentEvent.class, this::handlePunishmentEvent);
         }
@@ -176,7 +155,6 @@ public class PolarApiHook implements Runnable {
      * Handles a detection event
      */
     private void handleDetectionEvent(DetectionAlertEvent event) {
-        // Process on main thread for safety
         Bukkit.getScheduler().runTask(plugin, () -> {
             try {
                 User user = event.user();
@@ -208,7 +186,6 @@ public class PolarApiHook implements Runnable {
      * Handles a cloud detection event
      */
     private void handleCloudDetectionEvent(CloudDetectionEvent event) {
-        // Process on main thread for safety
         Bukkit.getScheduler().runTask(plugin, () -> {
             try {
                 User user = event.user();
@@ -239,22 +216,14 @@ public class PolarApiHook implements Runnable {
      * Handles a mitigation event
      */
     private void handleMitigationEvent(MitigationEvent event) {
-        // Process on main thread for safety
         Bukkit.getScheduler().runTask(plugin, () -> {
             try {
                 User user = event.user();
                 Check check = event.check();
-
-                // Create key for this mitigation
                 AlertKey mitigationKey = new AlertKey(serverName, user.username(), check.name());
-
-                // Increment the mitigation counter
                 int counter = mitigationCounter.getOrDefault(mitigationKey, 0) + 1;
                 mitigationCounter.put(mitigationKey, counter);
-
-                // Only forward if we've reached the configured frequency
                 if (counter >= mitigationAlertFrequency) {
-                    // Reset the counter
                     mitigationCounter.put(mitigationKey, 0);
 
                     forwardAlert(
@@ -287,7 +256,6 @@ public class PolarApiHook implements Runnable {
      * Handles a punishment event
      */
     private void handlePunishmentEvent(PunishmentEvent event) {
-        // Process on main thread for safety
         Bukkit.getScheduler().runTask(plugin, () -> {
             try {
                 User user = event.user();
@@ -319,18 +287,13 @@ public class PolarApiHook implements Runnable {
      */
     private void forwardAlert(String eventType, String playerName, String playerUuid,
                               String checkType, String checkName, double vl, String details) {
-
-        // Create a key for this alert
         AlertKey alertKey = new AlertKey(serverName, playerName, checkName);
-
-        // Check if this is a duplicate alert (same player, server, check, and VL up to first decimal place)
         String currentVlString = String.format("%.1f", vl);
 
         if (lastAlerts.containsKey(alertKey)) {
             String lastVlString = lastAlerts.get(alertKey);
 
             if (lastVlString.equals(currentVlString)) {
-                // This is a duplicate alert with the same VL (up to first decimal), ignore it
                 if (plugin.getConfig().getBoolean("debug", false)) {
                     plugin.getLogger().info("Ignored duplicate alert: " + playerName + " - " + checkName +
                             " - VL: " + currentVlString);
@@ -338,16 +301,10 @@ public class PolarApiHook implements Runnable {
                 return;
             }
         }
-
-        // Update the last alert for this key
         lastAlerts.put(alertKey, currentVlString);
-
-        // Use BungeeCord forwarding if enabled
         if (useBungeeForward) {
             forwardViaBungee(eventType, playerName, playerUuid, checkType, checkName, vl, details);
         }
-
-        // Use custom channel if enabled
         if (useCustomForward) {
             forwardViaCustomChannel(eventType, playerName, playerUuid, checkType, checkName, vl, details);
         }
@@ -358,28 +315,18 @@ public class PolarApiHook implements Runnable {
      */
     private void forwardViaBungee(String eventType, String playerName, String playerUuid,
                                   String checkType, String checkName, double vl, String details) {
-        // Get target servers for this event type
         List<String> targets = forwardTargets.getOrDefault(eventType, new ArrayList<>());
-
-        // Add default "ALL" target if configured
         if (plugin.getConfig().getBoolean("forward.bungee.forward-to-all", true)) {
             targets.add("ALL");
         }
-
-        // If no targets, no need to forward
         if (targets.isEmpty()) {
             return;
         }
-
-        // For each target, create a Forward message
         for (String target : targets) {
-            // Prepare the plugin message data
             ByteArrayDataOutput mainOut = ByteStreams.newDataOutput();
             mainOut.writeUTF("Forward");
             mainOut.writeUTF(target);
             mainOut.writeUTF("PolarAlert");
-
-            // Prepare the payload
             ByteArrayDataOutput payloadOut = ByteStreams.newDataOutput();
             payloadOut.writeUTF(serverName);
             payloadOut.writeUTF(eventType);
@@ -389,13 +336,9 @@ public class PolarApiHook implements Runnable {
             payloadOut.writeUTF(checkName);
             payloadOut.writeDouble(vl);
             payloadOut.writeUTF(truncateString(details, 1000));
-
-            // Write the payload to the main output
             byte[] payload = payloadOut.toByteArray();
             mainOut.writeShort(payload.length);
             mainOut.write(payload);
-
-            // Send via any online player
             sendPluginMessage(BUNGEE_CHANNEL, mainOut.toByteArray());
         }
     }
@@ -422,7 +365,6 @@ public class PolarApiHook implements Runnable {
      * Sends a plugin message using any online player
      */
     private void sendPluginMessage(String channel, byte[] data) {
-        // Find an online player to send the message through
         if (!plugin.getServer().getOnlinePlayers().isEmpty()) {
             Player player = plugin.getServer().getOnlinePlayers().iterator().next();
             player.sendPluginMessage(plugin, channel, data);

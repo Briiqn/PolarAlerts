@@ -19,10 +19,7 @@ public class PolarAlerts extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Save default config
         saveDefaultConfig();
-
-        // Check if we're in listen-only mode
         listenOnlyMode = getConfig().getBoolean("listen-only-mode", false);
 
         messageListener = new AlertMessageListener(this);
@@ -58,7 +55,6 @@ public class PolarAlerts extends JavaPlugin {
             this.getServer().getMessenger().unregisterIncomingPluginChannel(this, "BungeeCord", messageListener);
         }
         if (!listenOnlyMode && polarApiHook != null && polarApiHook.isConnected()) {
-            // Unregister outgoing channels
             for (String channel : polarApiHook.getRegisteredChannels()) {
                 this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, channel);
                 getLogger().info("Unregistered plugin messaging channel: " + channel);
