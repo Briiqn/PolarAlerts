@@ -1,4 +1,4 @@
-# PolarBungee
+# PolarAlerts
 
 A simple plugin that sends Polar anticheat alerts across your BungeeCord network.
 
@@ -11,7 +11,7 @@ A simple plugin that sends Polar anticheat alerts across your BungeeCord network
 
 ## Setup
 
-1. Put `PolarBungee.jar` in the plugins folder on:
+1. Put `PolarAlerts.jar` in the plugins folder on:
    - Servers running Polar (to send alerts)
    - Servers where staff should see alerts
 2. Restart your servers

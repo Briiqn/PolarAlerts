@@ -1,19 +1,28 @@
-# PolarBungee Helper Configuration
+# PolarAlerts Configuration
+
+# Listen-only mode (set to true for servers without Polar)
+# When true, the plugin will only receive and display alerts, not send them
+listen-only-mode: false
 
 # Debug mode (enables extra logging)
 debug: false
 
 # Your server name (if left blank, will try to use Bukkit server ID)
+# Only used when not in listen-only mode
 server-name: ''
 
 # Control which alert types are processed
+# Only used when not in listen-only mode
 alerts:
   detection: true
   cloud: true
   mitigation: true
+  # How often to send mitigation alerts (1 = every alert, 5 = every 5th alert, etc.)
+  mitigation-frequency: 1
   punishment: true
 
 # Forwarding configuration
+# Only used when not in listen-only mode
 forward:
   # Standard BungeeCord forwarding (works with vanilla BungeeCord)
   bungee:
@@ -38,7 +47,8 @@ forward:
   custom:
     enabled: false
 
-# Display settings for receiving alerts on target servers
+# Display settings for receiving alerts
+# Used in both regular and listen-only modes
 display:
   # Enable displaying alerts to staff
   enabled: true
@@ -56,9 +66,31 @@ display:
   # Whether to log alerts to console
   console-log: true
 
+  # Make alerts clickable (clicking will run /server command)
+  clickable: true
+
+  # Show detailed information when hovering over alerts
+  show-details-in-hover: true
+
+  # Text shown when hovering over an alert
+  hover-text: "§7Click to connect to §f%server%\n§7Player: §f%player%\n§7Check: §f%check%\n§7Type: §f%type%\n§7VL: §f%vl%"
+
   # Alert formats for different types
+  # Available placeholders:
+  # %server% - Server name
+  # %player% - Player name
+  # %check% - Check name
+  # %type% - Check type/category
+  # %vl% - Violation level
   formats:
-    detection: "§c[%server%] §f%player% §7failed §f%check% §7check (%type%) §8[§f%vl%§8]"
-    cloud: "§c[%server%] §f%player% §7failed §f%type% §7cloud check"
-    mitigation: "§e[%server%] §f%player% §7mitigated for §f%check% §7check (%type%) §8[§f%vl%§8]"
-    punishment: "§4[%server%] §f%player% §7was punished for §f%check%"
+    # Detection alert format
+    detection: "§7[§b❀§7] §7[%server%] §f%player% failed §b%check% §fVL: %vl%"
+
+    # Cloud detection alert format
+    cloud: "§7[§b☁§7] §7[%server%] §f%player% failed §b%type% §7(%check%)"
+
+    # Mitigation alert format
+    mitigation: "§7[§b❀§7] §7[%server%] §f%player% mitigated §b%check% §fVL: %vl%"
+
+    # Punishment alert format
+    punishment: "§7[§c⚠§7] §7[%server%] §f%player% was punished for §b%check%"

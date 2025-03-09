@@ -48,7 +48,7 @@ processResources {
 
 shadowJar {
     archiveClassifier = ''
-    relocate 'com.google.common', 'dev.briiqn.polarbungee.google'
+    relocate 'com.google.common', 'dev.briiqn.polaralerts.google'
     minimize()
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

@@ -1,12 +1,15 @@
-name: PolarBungee
+name: PolarAlerts
 version: 1.0
-main: dev.briiqn.polarbungee.PolarBungee
+main: dev.briiqn.polaralerts.PolarAlerts
 api-version: 1.13
-depend: [PolarLoader]
+softdepend: [PolarLoader]  # Changed from 'depend' to 'softdepend'
 authors: [briiqn]
 description: Helper plugin that forwards Polar alerts to BungeeCord
 
 permissions:
-  polarbungee.admin:
-    description: Gives access to all PolarBungee-Helper commands
+  polaralerts.admin:
+    description: Gives access to all PolarAlerts commands
+    default: op
+  anticheat.alerts:
+    description: Allows users to see anticheat alerts
     default: op

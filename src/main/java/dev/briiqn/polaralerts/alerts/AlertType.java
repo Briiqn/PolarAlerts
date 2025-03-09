@@ -1,4 +1,4 @@
-package dev.briiqn.polarbungee.alerts;
+package dev.briiqn.polaralerts.alerts;
 
 /**
  * Represents different types of alerts from Polar
