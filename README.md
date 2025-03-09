@@ -24,7 +24,7 @@ For servers without Polar that just need to display alerts:
 1. Put `PolarAlerts.jar` in the plugins folder
 2. Edit config.yml and set `listen-only-mode: true`
 
-This mode doesn't require Polar to be installed.
+This mode doesn't require Polar to be installed on the server with this plugin.
 
 ## Security
 
