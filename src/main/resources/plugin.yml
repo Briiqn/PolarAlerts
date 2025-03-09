@@ -1,5 +1,12 @@
-name: PolarBungeeHelper
-version: '1.0'
-main: dev.briiqn.polarBungeeHelper.PolarBungeeHelper
-api-version: '1.21'
-authors: [ Briiqn ]
+name: PolarBungee
+version: 1.0
+main: dev.briiqn.polarbungee.PolarBungee
+api-version: 1.13
+depend: [PolarLoader]
+authors: [briiqn]
+description: Helper plugin that forwards Polar alerts to BungeeCord
+
+permissions:
+  polarbungee.admin:
+    description: Gives access to all PolarBungee-Helper commands
+    default: op
