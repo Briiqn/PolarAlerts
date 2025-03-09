@@ -1,0 +1,64 @@
+# PolarBungee Helper Configuration
+
+# Debug mode (enables extra logging)
+debug: false
+
+# Your server name (if left blank, will try to use Bukkit server ID)
+server-name: ''
+
+# Control which alert types are processed
+alerts:
+  detection: true
+  cloud: true
+  mitigation: true
+  punishment: true
+
+# Forwarding configuration
+forward:
+  # Standard BungeeCord forwarding (works with vanilla BungeeCord)
+  bungee:
+    enabled: true
+    # Send to all servers? Set to false if using targeted forwarding below
+    forward-to-all: true
+    # Target specific servers for each alert type
+    # Only used if forward-to-all is false
+    targets:
+      DETECTION:
+        - 'lobby'
+        - 'staff'
+      CLOUD:
+        - 'lobby'
+        - 'staff'
+      MITIGATION:
+        - 'staff'
+      PUNISHMENT:
+        - 'ALL'  # Special value that forwards to all servers
+
+  # Custom forwarding (for custom BungeeCord plugins)
+  custom:
+    enabled: false
+
+# Display settings for receiving alerts on target servers
+display:
+  # Enable displaying alerts to staff
+  enabled: true
+
+  # Permission required to see alerts
+  permission: "anticheat.alerts"
+
+  # Which alert types to display
+  alert-types:
+    - "DETECTION"
+    - "CLOUD"
+    - "MITIGATION"
+    - "PUNISHMENT"
+
+  # Whether to log alerts to console
+  console-log: true
+
+  # Alert formats for different types
+  formats:
+    detection: "§c[%server%] §f%player% §7failed §f%check% §7check (%type%) §8[§f%vl%§8]"
+    cloud: "§c[%server%] §f%player% §7failed §f%type% §7cloud check"
+    mitigation: "§e[%server%] §f%player% §7mitigated for §f%check% §7check (%type%) §8[§f%vl%§8]"
+    punishment: "§4[%server%] §f%player% §7was punished for §f%check%"

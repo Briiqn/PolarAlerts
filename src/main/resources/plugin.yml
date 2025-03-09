@@ -1,0 +1,5 @@
+name: PolarBungeeHelper
+version: '1.0'
+main: dev.briiqn.polarBungeeHelper.PolarBungeeHelper
+api-version: '1.21'
+authors: [ Briiqn ]
