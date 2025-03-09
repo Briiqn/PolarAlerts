@@ -11,7 +11,7 @@ A simple **SPIGOT** plugin that sends Polar anticheat alerts across your BungeeC
 
 ## Setup
 
-1. Put `PolarBungee.jar` in the plugins folder on:
+1. Put `PolarAlerts.jar` in the plugins folder on:
    - Spigot/Paper Servers running Polar (to send alerts)
    - Spigot/Paper Servers where staff should see alerts
 2. Restart your servers
