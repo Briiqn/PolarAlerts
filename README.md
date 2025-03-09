@@ -1,4 +1,4 @@
-# PolarBungee Helper
+# PolarBungee
 
 A simple plugin that sends Polar anticheat alerts across your BungeeCord network.
 
