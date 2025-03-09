@@ -59,7 +59,6 @@ public class PolarApiHook implements Runnable {
 
         try {
             polarApi = PolarApiAccessor.access().get();
-
             if (polarApi != null) {
                 plugin.getLogger().info("Successfully connected to Polar API");
                 top.polar.api.loader.LoaderApi.registerEnableCallback(this);
@@ -328,6 +327,7 @@ public class PolarApiHook implements Runnable {
             mainOut.writeUTF(target);
             mainOut.writeUTF("PolarAlert");
             ByteArrayDataOutput payloadOut = ByteStreams.newDataOutput();
+            payloadOut.writeUTF(plugin.getSecretKey());
             payloadOut.writeUTF(serverName);
             payloadOut.writeUTF(eventType);
             payloadOut.writeUTF(playerName);
@@ -349,6 +349,7 @@ public class PolarApiHook implements Runnable {
     private void forwardViaCustomChannel(String eventType, String playerName, String playerUuid,
                                          String checkType, String checkName, double vl, String details) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF(plugin.getSecretKey());
         out.writeUTF(serverName);
         out.writeUTF(eventType);
         out.writeUTF(playerName);

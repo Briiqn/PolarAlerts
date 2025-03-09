@@ -8,6 +8,8 @@ import org.bukkit.plugin.java.annotation.plugin.Plugin;
 import org.bukkit.plugin.java.annotation.plugin.author.Author;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.UUID;
+
 @Plugin(name = "PolarAlerts", version = "1.0")
 @Author("briiqn")
 public class PolarAlerts extends JavaPlugin {
@@ -16,10 +18,19 @@ public class PolarAlerts extends JavaPlugin {
     private AlertMessageListener messageListener;
     private boolean listenOnlyMode;
     private BukkitTask polarRetryTask;
+    private String secretKey;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        if (!getConfig().contains("security.secret-key")) {
+            secretKey = UUID.randomUUID().toString();
+            getConfig().set("security.secret-key", secretKey);
+            saveConfig();
+        } else {
+            secretKey = getConfig().getString("security.secret-key");
+        }
+
         listenOnlyMode = getConfig().getBoolean("listen-only-mode", false);
 
         messageListener = new AlertMessageListener(this);
@@ -64,6 +75,9 @@ public class PolarAlerts extends JavaPlugin {
         getLogger().info("PolarAlerts has been disabled!");
     }
 
+    public String getSecretKey() {
+        return secretKey;
+    }
 
     public PolarApiHook getApiHook() {
         return polarApiHook;

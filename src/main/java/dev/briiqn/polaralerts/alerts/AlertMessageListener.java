@@ -27,15 +27,21 @@ public class AlertMessageListener implements PluginMessageListener {
         if (!channel.equals("BungeeCord")) {
             return;
         }
-        if(player!=null) return;
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subchannel = in.readUTF();
-
         if (subchannel.equals("PolarAlert")) {
             short len = in.readShort();
             byte[] msgbytes = new byte[len];
             in.readFully(msgbytes);
             ByteArrayDataInput msgin = ByteStreams.newDataInput(msgbytes);
+            String receivedSecretKey = msgin.readUTF();
+            if (!receivedSecretKey.equals(plugin.getSecretKey())) {
+                if (plugin.getConfig().getBoolean("debug", false)) {
+                    plugin.getLogger().warning("Received alert with invalid secret key - ignoring");
+                }
+                return;
+            }
+
             String serverName = msgin.readUTF();
             String eventType = msgin.readUTF();
             String playerName = msgin.readUTF();

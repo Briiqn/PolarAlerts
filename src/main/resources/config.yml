@@ -94,3 +94,9 @@ display:
 
     # Punishment alert format
     punishment: "§7[§c⚠§7] §7[%server%] §f%player% was punished for §b%check%"
+security:
+# Secret key will be automatically generated on first boot if not present
+# DO NOT SHARE THIS KEY - it is used to validate message authenticity
+# All Servers that you want to use this plugin with MUST have the same secret-key value
+# Uncomment the next line to use your own
+# secret-key: "will-be-auto-generated"
